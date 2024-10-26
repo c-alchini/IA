@@ -117,7 +117,7 @@ def searchByAStar(startID: str, goalID: str):
 
     while len(open) != 0:
         current = getMinF(open)
-        print(f"n: {current}")
+        print(f"\n n: {current}")
         closed.append(current)
         open.remove(current)
 
