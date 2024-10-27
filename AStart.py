@@ -1,3 +1,9 @@
+"""
+Trabalho Inteligência Artificial
+Algoritmo A*
+Autores: Cristian Alexandre Alchini, José Daniel Alves do Prado e Victor do Valle Cunha.
+Ano: 2024
+"""
 
 
 graph = {
@@ -21,7 +27,7 @@ graph = {
     'R': {'O': 72, 'Q': 65, 'P': 65}
 }
 
-# City distances table
+# Tabela de distâncias
 h = {
     "A": 240,
     "B": 186,
@@ -66,7 +72,7 @@ def addOrUpdateNode(newElement, open, closed):
             if (newF < existingF):
                 open.remove(el)
                 open.append(newElement)
-                return True
+            return True
 
     for el in closed:
         # Verifica se o novo elemento está presente em open
@@ -76,7 +82,7 @@ def addOrUpdateNode(newElement, open, closed):
             if (newF < existingF):
                 closed.remove(el)
                 open.append(newElement)
-                return True
+            return True
     
     return False
 
@@ -104,28 +110,48 @@ def reconstructPath(current, closed):
     
     return path
 
-def printPathTree(path):
-    print("ID - F(ID) - G_Acc")
+def printPathTree(path, goalID):
+    print(f"\nEncontrado caminho para {goalID}")
+    print("ID  - G_Acc - F(ID)")
     for ID, g, f in path:
-        print(f" {ID} -  {f}  -  {g}")
+        print(f" {ID:<2} -  {g:>3}  -  {f:<2}")
+
+def printIterationInfo(iteration, open, closed, current):
+    print(f"\n\nIteração: {iteration}")
+    
+    print(f"Open: ", end="")
+    for ID, _, g, hVal in open:
+        print(f"({ID}, f:{g+hVal}), ", end="")
+    
+    
+    print(f"\nClosed: ", end="")
+    for ID, _, g, hVal in closed:
+        print(f"({ID}, f:{g+hVal}), ", end="")
+    
+    print(f"\nNó selecionado: {current[0]}")
+
+def printExpandedNodes(expanded):
+    print(f"Nós verificados (expansão): ", end="")
+    for ID, _, g, hVal in expanded:
+        print(f"({ID} = g:{g}, h:{hVal}, f:{g+hVal}), ", end="")
 
 def searchByAStar(startID: str, goalID: str):
     # Cada elemento é um tupla: (Nó do grafo, nó pai, distância g, distância h)
     initialState = (startID, None, 0, h[startID])
     open = [initialState]
     closed = []
-
+    i = 0
     while len(open) != 0:
         current = getMinF(open)
-        print(f"\n n: {current}")
+        printIterationInfo(i, open, closed, current)
+        
         closed.append(current)
         open.remove(current)
 
         currentID = current[0]
         if currentID == goalID:
-            print(f"Encontrado caminho para {goalID}")
             path = reconstructPath(current, closed)
-            printPathTree(path)
+            printPathTree(path, goalID)
             return
         
         expanded = []
@@ -137,17 +163,11 @@ def searchByAStar(startID: str, goalID: str):
             if not addOrUpdateNode(newElement, open, closed):
                 open.append(newElement)
         
-        print(f"expanded: {expanded}") # TODO: Dúvida se é isso
-        print(f"open: {open}")
-        print(f"closed: {closed}")
+        printExpandedNodes(expanded)        
+        i = i+1
 
 def main():
     searchByAStar('A', 'R')
 
 if __name__ == "__main__":
     main()
-
-        
-
-
-
